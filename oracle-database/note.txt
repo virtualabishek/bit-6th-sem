@@ -67,7 +67,7 @@ DATAFILE 'F:\db_home\oradata\ORCL\iamfake.dbf'
 SIZE 10M
 AUTOEXTEND ON
 NEXT 10m
-MAXFILE 50M;
+MAXSIZE 50M;
 
 To altered the tablespacs (setting new tablesapce as default)
 ALTER DATABASE DEFAULT TABLESPACE iamfake;
