@@ -1,0 +1,64 @@
+To connnect to the oracle:
+-> sys as sysdba
+
+To check version:
+select * from v$version
+
+To shutdown:
+shutdown
+
+To start:
+startup
+
+To show user:
+show user
+
+To show database.
+select name from v$database
+
+
+To show plugable database:
+	
+
+To get user
+select * from dba_users;
+
+To get user name
+select username from dba_users;
+
+To start the listener:
+ce	
+
+
+To stop the listener:
+lsnrctl stop
+
+To read: Table Space and data files
+
+To get the tablespace
+
+select * from dba_tablespaces;
+
+to get just the table_spaces:
+select tablespace_name from dba_tablespaces;
+
+
+to get the size of the dba_data_Files:
+select tablespace_name, file_name, bytes/1024/1024 as size_mb from dba_data_files;
+
+to get the default username of the the user in the table:
+select username, default_tablespace from dba_users; 
+
+tomorrow:
+make one listner, datafile, 
+
+make a listner:
+netca
+
+to start the new listner:
+lsnrctl stop
+
+start new Listener:
+lsnrctl start LISTNER-NAME
+
+

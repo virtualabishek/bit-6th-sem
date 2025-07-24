@@ -6,7 +6,7 @@ namespace MyMvcApp.Controllers
     public class StudentController : Controller
     {
        public String Index() {
-        return "This is test mvc";
+        return "This is test mvc. haha hihi huhu";
        }
     }
 }
