@@ -81,5 +81,10 @@ DElete the tablespace
 
 
 
-note: SIZE 10M -> jati diyo teti space lincha
+note: SIZE 10M -> jati diyo teti spaceORA-01109: database not op lincha
+
+---
+
+create user 
+CREATE USER iamusera IDENTIFIED BY test123
 
