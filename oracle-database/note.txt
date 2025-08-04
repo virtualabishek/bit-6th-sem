@@ -107,3 +107,164 @@ verify:
 SELECT username FROM dba_users WHERE username = 'iamusera';
 
 
+for creating user without pda:
+SQL> CREATE USER C##iamfakeuser IDENTIFIED BY test123;
+
+User created.
+
+
+36 rows selected.
+
+SQL> CREATE USER C##iamfakeuser IDENTIFIED BY test123;
+
+User created.
+
+SQL>
+SQL> show user;
+USER is "SYS"
+SQL> CONNECT iamfakeuser;
+Enter password:
+ERROR:
+ORA-01005: null password given; logon denied
+
+
+Warning: You are no longer connected to ORACLE.
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+ERROR:
+ORA-01005: null password given; logon denied
+
+
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+ERROR:
+ORA-01045: user C##IAMFAKEUSER lacks CREATE SESSION privilege; logon denied
+
+
+SQL>
+
+we should give privilidge and session
+
+code to give session
+Warning: You are no longer connected to ORACLE.
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+ERROR:
+ORA-01005: null password given; logon denied
+
+
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+ERROR:
+ORA-01045: user C##IAMFAKEUSER lacks CREATE SESSION privilege; logon denied
+
+
+SQL> GRANT CREATE SESSION TO c##iamfakeuser;
+SP2-0640: Not connected
+SQL> clear
+SQL> clear;
+SQL> GRANT CONNECT, RESOURCE TO C##iamfakeuser;
+SP2-0640: Not connected
+SQL> show user;
+USER is ""
+SQL> CONNECT sys as sysdba
+Enter password:
+Connected.
+SQL> GRANT CREATE SESSION TO c##iamfakeuser;
+
+Grant succeeded.
+
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+Connected.
+SQL> show user;
+USER is "C##IAMFAKEUSER"
+SQL>
+
+to give privilidge:
+
+
+Grant succeeded.
+
+SQL> CONNECT C##iamfakeuser;
+Enter password:
+Connected.
+SQL> show user;
+USER is "C##IAMFAKEUSER"
+SQL> connect sys as sysdba;
+Enter password:
+Connected.
+SQL> show user;
+USER is "SYS"
+SQL> GRANT CREATE TABLE TO C##iamfakeuser;
+
+Grant succeeded.
+
+SQL> GRANT CREATE VIEW TO C##iamfakeuser;
+
+Grant succeeded.
+
+SQL> connect c##iamfakeuser;
+Enter password:
+Connected.
+SQL> show usewrl
+SP2-0158: unknown SHOW option "usewrl"
+SQL> show user;
+USER is "C##IAMFAKEUSER"
+SQL>
+
+
+SQL> connect c##iamfakeuser;
+Enter password:
+Connected.
+SQL> show user;
+USER is "C##IAMFAKEUSER"
+SQL> CREATE TABLE student(
+  2  id number primary key,
+  3  name varchar2(50),
+  4  age number,
+  5  );
+)
+*
+ERROR at line 5:
+ORA-00904: : invalid identifier
+
+
+SQL> CREATE TABLE student(
+  2  id number primary key,
+  3  name varchar2(50),
+  4  age number
+  5  );
+
+Table created.
+
+SQL> show table;
+SP2-0158: unknown SHOW option "table"
+SQL>
+
+
+
+SQL> connect sys as sysdba;
+Enter password:
+Connected.
+SQL> show user;
+USER is "SYS"
+SQL> ALTER USER C##IAMFAKEUSER QUOTA UNLIMITED ON USERS;
+
+User altered.
+
+SQL> connect c##iamfakeuser;
+Enter password:
+Connected.
+SQL> INSERT INTO student VALUES (1, 'Ram', 20);
+
+1 row created.
+
+Commit complete.
+SQL> select * from student;
+
+        ID NAME                                                      AGE
+---------- -------------------------------------------------- ----------
+         1 Ram                                                        20
+
+SQL>
