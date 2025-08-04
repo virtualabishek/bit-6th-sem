@@ -81,10 +81,29 @@ DElete the tablespace
 
 
 
-note: SIZE 10M -> jati diyo teti spaceORA-01109: database not op lincha
+note: SIZE 10M -> jati diyo teti spacelincha
 
 ---
 
 create user 
+aba apile kun kun pluggable database cha tyo herna paryo:
+SHOW PDBS;
+
+aba need alter to that PDBS
+ALTER PLUGGABLE DATABASE ORCLPDB OPEN;
+
+switch session
+ALTER SESSION SET CONTAINER=ORCLPDB;
+
+balla user banaune
+
 CREATE USER iamusera IDENTIFIED BY test123
+
+aba permission dine
+GRANT CONNECT, RESOURCE TO iamusera;
+
+
+verify:
+SELECT username FROM dba_users WHERE username = 'iamusera';
+
 
