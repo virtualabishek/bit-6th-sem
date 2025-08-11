@@ -268,3 +268,27 @@ SQL> select * from student;
          1 Ram                                                        20
 
 SQL>
+
+---- new class --- 
+
+1. create user:
+CREATE USER testuser IDENTIFIED BY test123;   
+2. GRANT CONNECT, RESOURCE TO testuser;
+
+3. CONNECT testuser/test123;
+
+4. CREATE TABLE employees (
+employee id NUMBER PRIMARY KEY,
+first_name VARCHAR2(50),
+last_name VARCHAR2(50),
+
+5. INSERT INTO employees VALUES (101, 'John', 'Doe', 10);
+INSERT INTO employees VALUES (102, "Hari", "Thapa", 20);
+COMMIT;
+
+
+
+
+
+
+
