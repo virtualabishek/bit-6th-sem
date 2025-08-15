@@ -297,99 +297,292 @@ GRANT CREATE SESSION TO C##iamfakeuser;
 - **SP2-0158: unknown SHOW option**  
   Verify the correct command (e.g., `show user` instead of `show usewrl` or `show table`).
 
-64bd4a996" title="README.md" contentType="text/markdown">
-
 # Oracle Database 19c: Undo Tablespace Management Practice
 
-This README documents the practice session conducted on August 15, 2025, at college, focusing on managing undo tablespaces in Oracle Database 19c Enterprise Edition (Version 19.3.0.0.0). The session involved logging into an Oracle database instance running in a Docker container, performing various SQL commands related to undo tablespace management, and debugging errors encountered during the process.
+This README documents the practice session conducted on August 15, 2025, at college, focusing on managing undo tablespaces in Oracle Database 19c Enterprise Edition (Version 19.3.0.0.0). The session involved logging into an Oracle database instance running in a Docker container, performing various SQL commands related to undo tablespace management, and debugging errors encountered during the process. The full command output is included below for reference.
 
 ## Session Overview
 
-The practice involved connecting to an Oracle 19c database instance using `sqlplus` as the `SYS` user with `SYSDBA` privileges. The primary focus was on querying and modifying undo tablespace settings, creating a new undo tablespace, switching between tablespaces, and handling errors. Below is a summary of the commands executed and the debugging process for errors encountered.
+The practice involved connecting to an Oracle 19c database instance using `sqlplus` as the `SYS` user with `SYSDBA` privileges. The primary focus was on querying and modifying undo tablespace settings, creating a new undo tablespace, switching between tablespaces, and handling errors. Below is a summary of the commands executed, their outputs, and the debugging process for errors encountered.
 
-## Commands Executed
+## Commands Executed and Outputs
 
-1. **Check Current Undo Tablespace Settings**:
+1. **Access the Docker Container and SQL\*Plus**:
+
+   ```bash
+   sudo docker exec -it oracle19c-new bash
+   bash-4.2$ sqlplus
+   ```
+
+   **Output**:
+
+   ```
+   SQL*Plus: Release 19.0.0.0.0 - Production on Fri Aug 15 02:25:19 2025
+   Version 19.3.0.0.0
+
+   Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+   Enter user-name: sys as sysdba
+   Enter password:
+
+   Connected to:
+   Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+   Version 19.3.0.0.0
+   ```
+
+2. **Check Current Undo Tablespace Settings**:
 
    ```sql
    show parameter undo_tablespace;
    ```
 
-   - **Output**: Confirmed the current undo tablespace is `UNDOTBS1`.
+   **Output**:
 
-2. **Check Undo Retention**:
+   ```
+   NAME                                 TYPE        VALUE
+   ------------------------------------ ----------- ------------------------------
+   undo_tablespace                      string      UNDOTBS1
+   ```
+
+3. **Check Undo Retention**:
 
    ```sql
    show parameter undo_retention;
    ```
 
-   - **Output**: Default undo retention is 900 seconds.
+   **Output**:
 
-3. **Query Undo Tablespaces**:
+   ```
+   NAME                                 TYPE        VALUE
+   ------------------------------------ ----------- ------------------------------
+   undo_retention                       integer     900
+   ```
+
+4. **Query Undo Tablespaces**:
+
+   ```sql
+   SELECT TABLESPACE_NAME, RETENTION FROM DBA_TABLESPACE WHERE CONTENTS = 'undo';
+   ```
+
+   **Output**:
+
+   ```
+   SELECT TABLESPACE_NAME, RETENTION FROM DBA_TABLESPACE
+                                          *
+   ERROR at line 1:
+   ORA-00942: table or view does not exist
+   ```
+
+   ```sql
+   SELECT TABLESPACE_NAME, RETENTION FROM DBA_TABLESPACES WHERE CONTENT = 'undo';
+   ```
+
+   **Output**:
+
+   ```
+   WHERE CONTENT = 'undo'
+         *
+   ERROR at line 3:
+   ORA-00904: "CONTENT": invalid identifier
+   ```
+
+   ```sql
+   SELECT TABLESPACE_NAME, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'undo';
+   ```
+
+   **Output**:
+
+   ```
+   no rows selected
+   ```
+
+   ```sql
+   select tablesapce_name, retention FROM dba_tablespaces where contents = 'UNDO';
+   ```
+
+   **Output**:
+
+   ```
+   select tablesapce_name, retention
+          *
+   ERROR at line 1:
+   ORA-00904: "TABLESAPCE_NAME": invalid identifier
+   ```
 
    ```sql
    SELECT TABLESPACE_NAME, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'UNDO';
    ```
 
-   - **Initial Errors**:
-     - `ORA-00942: table or view does not exist`: Caused by querying `DBA_TABLESPACE` (singular) instead of `DBA_TABLESPACES` (plural).
-     - `ORA-00904: "CONTENT": invalid identifier`: Used `CONTENT` instead of `CONTENTS`.
-     - `ORA-00904: "TABLESAPCE_NAME": invalid identifier`: Typo in `TABLESPACE_NAME`.
-   - **Corrected Query**:
-     ```sql
-     SELECT TABLESPACE_NAME, CONTENTS, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'UNDO';
-     ```
-     - **Output**: Displayed `UNDOTBS1` with `NOGUARANTEE` retention.
+   **Output**:
 
-4. **Create a New Undo Tablespace**:
+   ```
+   TABLESPACE_NAME                RETENTION
+   ------------------------------ -----------
+   UNDOTBS1                      NOGUARANTEE
+   ```
+
+5. **Check User**:
+
+   ```sql
+   show user;
+   ```
+
+   **Output**:
+
+   ```
+   USER is "SYS"
+   ```
+
+6. **Create a New Undo Tablespace**:
 
    ```sql
    CREATE UNDO_TABLESPACE undotbs2 DATAFILE 'undotbs2.dbf' SIZE 50M AUTOEXTEND ON;
    ```
 
-   - **Error**: `ORA-00901: invalid CREATE command` due to incorrect syntax (`UNDO_TABLESPACE` instead of `UNDO TABLESPACE`).
-   - **Corrected Command**:
-     ```sql
-     CREATE UNDO TABLESPACE undotbs2 DATAFILE 'undotbs2.dbf' SIZE 50M AUTOEXTEND ON;
-     ```
-     - **Result**: Successfully created `UNDOTBS2`.
+   **Output**:
 
-5. **Switch to New Undo Tablespace**:
+   ```
+   CREATE UNDO_TABLESPACE undotbs2
+          *
+   ERROR at line 1:
+   ORA-00901: invalid CREATE command
+   ```
+
+   ```sql
+   CREATE UNDO TABLESPACE undotbs2 DATAFILE 'undotbs2.dbf' SIZE 50M AUTOEXTEND ON;
+   ```
+
+   **Output**:
+
+   ```
+   Tablespace created.
+   ```
+
+7. **Switch to New Undo Tablespace**:
 
    ```sql
    ALTER SYSTEM SET undo_tablespace = undotbs2;
    ```
 
-   - **Result**: Successfully set `UNDOTBS2` as the active undo tablespace, confirmed with `show parameter undo_tablespace`.
+   **Output**:
 
-6. **Set Retention Guarantee**:
-
-   ```sql
-   ALTER TABLESPACE undotbs2 RETENTION GUARANTEE;
+   ```
+   System altered.
    ```
 
-   - **Error**: `ORA-02142: missing or invalid ALTER TABLESPACE option` due to typo (`GUARANE` instead of `GUARANTEE`).
-   - **Corrected Command**:
-     ```sql
-     ALTER TABLESPACE undotbs2 RETENTION GUARANTEE;
-     ```
-     - **Result**: Successfully set retention guarantee for `UNDOTBS2`.
+8. **Verify Undo Tablespace Change**:
 
-7. **Verify Changes**:
+   ```sql
+   show parameter undo_tablespace;
+   ```
+
+   **Output**:
+
+   ```
+   NAME                                 TYPE        VALUE
+   ------------------------------------ ----------- ------------------------------
+   undo_tablespace                      string      UNDOTBS2
+   ```
+
+9. **Query Undo Tablespaces Again**:
+
+   ```sql
+   SELECT TABLE_SPACE, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'UNDO';
+   ```
+
+   **Output**:
+
+   ```
+   SELECT TABLE_SPACE, RETENTION
+          *
+   ERROR at line 1:
+   ORA-00904: "TABLE_SPACE": invalid identifier
+   ```
 
    ```sql
    SELECT TABLESPACE_NAME, CONTENTS, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'UNDO';
    ```
 
-   - **Issue**: Query returned `no rows selected` due to case sensitivity (`'undo'` vs. `'UNDO'`). Corrected to use `'UNDO'`.
-   - **Output**: Confirmed `UNDOTBS1` with `NOGUARANTEE` and `UNDOTBS2` with `GUARANTEE`.
+   **Output**:
 
-8. **Switch Back to Original Tablespace and Drop New Tablespace**:
-   ```sql
-   ALTER SYSTEM SET undo_tablespace = undotbs1;
-   DROP TABLESPACE undotbs2 INCLUDING CONTENTS AND DATAFILES;
    ```
-   - **Result**: Successfully switched back to `UNDOTBS1` and dropped `UNDOTBS2`.
+   TABLESPACE_NAME                CONTENTS              RETENTION
+   ------------------------------ --------------------- -----------
+   UNDOTBS1                      UNDO                  NOGUARANTEE
+   UNDOTBS2                      UNDO                  NOGUARANTEE
+   ```
+
+10. **Set Retention Guarantee**:
+
+    ```sql
+    ALTER TABLESPACE undotbs2 RETENTION GUARANTEE;
+    ```
+
+    **Output**:
+
+    ```
+    ALTER TABLESPACE undotbs2 RETENTION GUARANE
+                                        *
+    ERROR at line 1:
+    ORA-02142: missing or invalid ALTER TABLESPACE option
+    ```
+
+    ```sql
+    ALTER TABLESPACE undotbs2 RETENTION GUARANTEE;
+    ```
+
+    **Output**:
+
+    ```
+    Tablespace altered.
+    ```
+
+11. **Verify Retention Change**:
+
+    ```sql
+    SELECT TABLESPACE_NAME, CONTENTS, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'undo';
+    ```
+
+    **Output**:
+
+    ```
+    no rows selected
+    ```
+
+    ```sql
+    SELECT TABLESPACE_NAME, CONTENTS, RETENTION FROM DBA_TABLESPACES WHERE CONTENTS = 'UNDO';
+    ```
+
+    **Output**:
+
+    ```
+    TABLESPACE_NAME                CONTENTS              RETENTION
+    ------------------------------ --------------------- -----------
+    UNDOTBS1                      UNDO                  NOGUARANTEE
+    UNDOTBS2                      UNDO                  GUARANTEE
+    ```
+
+12. **Switch Back to Original Tablespace and Drop New Tablespace**:
+
+    ```sql
+    ALTER SYSTEM SET undo_tablespace = undotbs1;
+    ```
+
+    **Output**:
+
+    ```
+    System altered.
+    ```
+
+    ```sql
+    DROP TABLESPACE undotbs2 INCLUDING CONTENTS AND DATAFILES;
+    ```
+
+    **Output**:
+
+    ```
+    Tablespace dropped.
+    ```
 
 ## Debugging Errors
 
@@ -421,8 +614,13 @@ Below are the errors encountered during the session, their causes, and how they 
    - **Resolution**: Corrected the spelling to `GUARANTEE`.
 
 6. **No rows selected in query**:
+
    - **Cause**: Case sensitivity in the `WHERE CONTENTS = 'undo'` condition; Oracle expects `'UNDO'` (uppercase).
    - **Resolution**: Changed the condition to `WHERE CONTENTS = 'UNDO'`.
+
+7. **SP2-0158: unknown SHOW option "paramter"**:
+   - **Cause**: Typo in `parameter` (`paramter`) and incorrect tablespace name `undotbs1`.
+   - **Resolution**: Corrected to `show parameter undo_tablespace`.
 
 ## Key Learnings
 
@@ -437,7 +635,7 @@ Below are the errors encountered during the session, their causes, and how they 
 - **Database**: Oracle Database 19c Enterprise Edition (Version 19.3.0.0.0)
 - **Container**: Docker container (`oracle19c-new`)
 - **Tool**: `sqlplus` as `SYS` user with `SYSDBA` privileges
-- **Date**: August 15, 2025
+- **Date and Time**: August 15, 2025, 08:38 AM +0545
 
 ## Recommendations for Future Practice
 
@@ -448,5 +646,5 @@ Below are the errors encountered during the session, their causes, and how they 
 
 ## References
 
-- Oracle Database 19c Documentation: [Managing Undo](https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-undo.html)[](https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-undo.html)
-- Oracle Help Center: [UNDO_TABLESPACE](https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/UNDO_TABLESPACE.html)[](https://docs.oracle.com/en/database/oracle//oracle-database/21/refrn/UNDO_TABLESPACE.html)
+- Oracle Database 19c Documentation: [Managing Undo](https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-undo.html)
+- Oracle Help Center: [UNDO_TABLESPACE](https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/UNDO_TABLESPACE.html)
