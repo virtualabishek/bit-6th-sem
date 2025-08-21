@@ -648,3 +648,693 @@ Below are the errors encountered during the session, their causes, and how they 
 
 - Oracle Database 19c Documentation: [Managing Undo](https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-undo.html)
 - Oracle Help Center: [UNDO_TABLESPACE](https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/UNDO_TABLESPACE.html)
+
+## Backup
+
+Below is a **README.md** file that documents the process of enabling archive log mode and performing a database backup using Oracle Recovery Manager (RMAN) for an Oracle 19c database running in a Docker container. The file includes the commands, their outputs, and explanations of each step.
+
+# Oracle 19c Database Backup with RMAN in Docker
+
+This README documents the steps to enable archive log mode and perform a full database backup using Oracle Recovery Manager (RMAN) for an Oracle 19c database running in a Docker container named `oracle19c-new`. The commands, their outputs, and explanations are provided to ensure clarity and reproducibility.
+
+## Prerequisites
+
+- Oracle 19c database installed in a Docker container (`oracle19c-new`).
+- Docker is running, and the user has `sudo` privileges.
+- Oracle SQL\*Plus and RMAN tools are available in the container.
+- The database is accessible with `sys as sysdba` credentials.
+
+## Steps to Enable Archive Log Mode and Perform Backup
+
+### 1. Start the Docker Container
+
+Start the Docker container to ensure the Oracle database is running.
+
+```bash
+sudo docker start oracle19c-new
+```
+
+**Output:**
+
+```
+oracle19c-new
+```
+
+**Explanation:**
+
+- The `sudo docker start oracle19c-new` command starts the Docker container named `oracle19c-new` if it is not already running.
+- The output confirms that the container has started successfully.
+
+### 2. Access the Container
+
+Enter the Docker container's bash shell to execute Oracle commands.
+
+```bash
+sudo docker exec -it oracle19c-new bash
+```
+
+**Output:**
+
+- Opens an interactive bash session inside the container.
+
+**Explanation:**
+
+- The `sudo docker exec -it oracle19c-new bash` command starts an interactive terminal session (`-it`) inside the `oracle19c-new` container, allowing execution of commands like `sqlplus` and `rman`.
+
+### 3. Connect to SQL\*Plus as SYSDBA
+
+Launch SQL\*Plus and connect as the `sys` user with `sysdba` privileges.
+
+```bash
+sqlplus
+```
+
+**Prompt:**
+
+```
+Enter user-name: sys as sysdba
+Enter password:
+```
+
+**Output:**
+
+```
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Aug 20 01:31:37 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+```
+
+**Explanation:**
+
+- `sqlplus` starts the SQL\*Plus client.
+- Logging in as `sys as sysdba` grants administrative privileges to manage the database.
+- The output confirms the connection to Oracle Database 19c Enterprise Edition.
+
+### 4. Check Archive Log Mode
+
+Verify the current archive log mode of the database.
+
+```sql
+archive log list
+```
+
+**Output:**
+
+```
+Database log mode           Archive Mode
+Automatic archival         Enabled
+Archive destination        /opt/oracle/product/19c/dbhome_1/dbs/arch
+Oldest online log sequence 7
+Next log sequence to archive 9
+Current log sequence       9
+```
+
+**Explanation:**
+
+- The `archive log list` command displays the database's archiving status.
+- The output shows that the database is already in `Archive Mode` with automatic archiving enabled. The archive destination is `/opt/oracle/product/19c/dbhome_1/dbs/arch`.
+- If the database is in `No Archive Mode`, it must be enabled (see Step 5).
+
+### 5. Enable Archive Log Mode (if needed)
+
+If the database is not in archive log mode, shut down the database, mount it, and enable archive log mode.
+
+```sql
+SHUTDOWN IMMEDIATE;
+```
+
+**Output:**
+
+```
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+```
+
+```sql
+STARTUP MOUNT;
+```
+
+**Output:**
+
+```
+ORACLE instance started.
+
+Total System Global Area 2432692416 bytes
+Fixed Size               9138368 bytes
+Variable Size            570425344 bytes
+Database Buffers         1845493760 bytes
+Redo Buffers             7634944 bytes
+Database mounted.
+```
+
+```sql
+ALTER DATABASE ARCHIVELOG;
+```
+
+**Output:**
+
+```
+Database altered.
+```
+
+```sql
+archive log list
+```
+
+**Output:**
+
+```
+Database log mode           Archive Mode
+Automatic archival         Enabled
+Archive destination        /opt/oracle/product/19c/dbhome_1/dbs/arch
+Oldest online log sequence 7
+Next log sequence to archive 9
+Current log sequence       9
+```
+
+**Explanation:**
+
+- `SHUTDOWN IMMEDIATE` gracefully shuts down the database, closing and dismounting it.
+- `STARTUP MOUNT` starts the database instance and mounts the database without opening it, which is required to change the archive log mode.
+- `ALTER DATABASE ARCHIVELOG` enables archive log mode, allowing redo logs to be archived for point-in-time recovery.
+- The final `archive log list` confirms that the database is now in `Archive Mode`.
+
+**Note:** If you encounter errors like `SP2-0717: illegal SHUTDOWN option`, ensure the command is typed correctly (e.g., `IMMEDIATE`, not `IMMEDIATELY` or `IMEEDIATE`).
+
+### 6. Exit SQL\*Plus
+
+Exit SQL\*Plus to return to the bash shell.
+
+```sql
+exit;
+```
+
+**Output:**
+
+```
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+```
+
+**Explanation:**
+
+- The `exit` command disconnects from SQL\*Plus and returns to the container's bash shell.
+
+### 7. Connect to RMAN
+
+Start RMAN and connect to the target database.
+
+```bash
+rman target /
+```
+
+**Output:**
+
+```
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Aug 20 01:33:24 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCLCDB (DBID=2979897351, not open)
+```
+
+**Explanation:**
+
+- `rman target /` starts RMAN and connects to the target database (`ORCLCDB`) using OS authentication.
+- The output confirms the connection to the database with the specified DBID, which is in a mounted state (`not open`).
+
+**Note:** If you encounter `RMAN: command not found`, ensure you are in the correct environment. The command `rman` is case-sensitive; try `rman` instead of `RMAN`.
+
+### 8. List Existing Backups
+
+Check for existing backups in the RMAN repository.
+
+```rman
+LIST BACKUP;
+```
+
+**Output:**
+
+```
+using target database control file instead of recovery catalog
+specification does not match any backup in the repository
+```
+
+**Explanation:**
+
+- The `LIST BACKUP` command displays all backups in the RMAN repository.
+- The initial output indicates no backups exist yet.
+
+### 9. Perform a Full Database Backup
+
+Back up the database, including archived logs.
+
+```rman
+BACKUP DATABASE PLUS ARCHIVELOG;
+```
+
+**Output:**
+
+```
+Starting backup at 20-AUG-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=622 device type=DISK
+channel ORA_DISK_1: starting archived log backup set
+channel ORA_DISK_1: specifying archived log(s) in backup set
+input archived log thread=1 sequence=8 RECID=1 STAMP=1209605035
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0141i7hg_1_1 tag=TAG20250820T013440 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:03
+Finished backup at 20-AUG-25
+
+Starting backup at 20-AUG-25
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00001 name=/opt/oracle/oradata/ORCLCDB/system01.dbf
+input datafile file number=00003 name=/opt/oracle/oradata/ORCLCDB/sysaux01.dbf
+input datafile file number=00004 name=/opt/oracle/oradata/ORCLCDB/undotbs01.dbf
+input datafile file number=00013 name=/opt/oracle/oradata/ORCLCDB/ilovespace.dbf
+input datafile file number=00007 name=/opt/oracle/oradata/ORCLCDB/users01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0241i7hj_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:15
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00010 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/sysaux01.dbf
+input datafile file number=00009 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/system01.dbf
+input datafile file number=00011 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/undotbs01.dbf
+input datafile file number=00012 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/users01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0341i7i3_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00006 name=/opt/oracle/oradata/ORCLCDB/pdbseed/sysaux01.dbf
+input datafile file number=00005 name=/opt/oracle/oradata/ORCLCDB/pdbseed/system01.dbf
+input datafile file number=00008 name=/opt/oracle/oradata/ORCLCDB/pdbseed/undotbs01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0441i7ia_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:07
+Finished backup at 20-AUG-25
+
+Starting backup at 20-AUG-25
+using channel ORA_DISK_1
+specification does not match any archived log in the repository
+backup cancelled because there are no files to backup
+Finished backup at 20-AUG-25
+
+Starting Control File and SPFILE Autobackup at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/c-2979897351-20250820-00 comment=NONE
+Finished Control File and SPFILE Autobackup at 20-AUG-25
+```
+
+**Explanation:**
+
+- The `BACKUP DATABASE PLUS ARCHIVELOG` command performs a full backup of the database and all archived redo logs.
+- The command creates multiple backup sets:
+  - **Backup Set 1**: Contains archived log sequence 8 (191.32 MB).
+  - **Backup Set 2**: Contains datafiles for the CDB (1.22 GB).
+  - **Backup Set 3**: Contains datafiles for the `ORCLPDB1` pluggable database (489.97 MB).
+  - **Backup Set 4**: Contains datafiles for the `PDB$SEED` pluggable database (555.95 MB).
+  - **Backup Set 5**: Contains the control file and SPFILE (17.95 MB).
+- The backup pieces are stored in `/opt/oracle/product/19c/dbhome_1/dbs/`.
+- An error occurred initially (`ARHIVELOG` misspelled as `ARCHIVELOG`), which was corrected in the subsequent command.
+- The final attempt to back up archived logs was canceled because no new logs were available.
+
+### 10. Verify the Backup
+
+List the backups to confirm they were created successfully.
+
+```rman
+LIST BACKUP;
+```
+
+**Output:**
+
+```
+List of Backup Sets
+===================
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+1       191.32M    DISK        00:00:01     20-AUG-25
+        BP Key: 1   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013440
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0141i7hg_1_1
+  List of Archived Logs in backup set 1
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    8       2284316    15-AUG-25 2387814    20-AUG-25
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+2       Full    1.22G      DISK        00:00:08     20-AUG-25
+        BP Key: 2   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0241i7hj_1_1
+  List of Datafiles in backup set 2
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  1       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/system01.dbf
+  3       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/sysaux01.dbf
+  4       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/undotbs01.dbf
+  7       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/users01.dbf
+  13      Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ilovespace.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+3       Full    489.97M    DISK        00:00:03     20-AUG-25
+        BP Key: 3   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0341i7i3_1_1
+  List of Datafiles in backup set 3
+  Container ID: 3, PDB Name: ORCLPDB1
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  9       Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/system01.dbf
+  10      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/sysaux01.dbf
+  11      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/undotbs01.dbf
+  12      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+4       Full    555.95M    DISK        00:00:03     20-AUG-25
+        BP Key: 4   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0441i7ia_1_1
+  List of Datafiles in backup set 4
+  Container ID: 2, PDB Name: PDB$SEED
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  5       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/system01.dbf
+  6       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/sysaux01.dbf
+  8       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/undotbs01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+5       Full    17.95M     DISK        00:00:00     20-AUG-25
+        BP Key: 5   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013513
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/c-2979897351-20250820-00
+  SPFILE Included: Modification time: 20-AUG-25
+  SPFILE db_unique_name: ORCLCDB
+  Control File Included: Ckp SCN: 2394960      Ckp time: 20-AUG-25
+```
+
+**Explanation:**
+
+- The `LIST BACKUP` command confirms the creation of five backup sets, detailing their contents, sizes, and locations.
+- Each backup set includes specific datafiles or archived logs, with timestamps and checkpoint SCNs for recovery purposes.
+- The backups are stored on disk and are marked as `AVAILABLE` with no compression.
+
+### 11. Exit RMAN
+
+Exit the RMAN session.
+
+```rman
+exit;
+```
+
+**Output:**
+
+```
+Recovery Manager complete.
+```
+
+**Explanation:**
+
+- The `exit` command closes the RMAN session and returns to the bash shell.
+
+### 12. Exit the Container
+
+Exit the Docker container's bash shell.
+
+```bash
+exit;
+```
+
+**Output:**
+
+```
+exit
+```
+
+**Explanation:**
+
+- The `exit` command terminates the bash session inside the container, returning to the host machine's terminal.
+
+## Common Errors and Fixes
+
+- **SP2-0734: unknown command beginning "archive lo..."**
+  - **Cause**: Misspelled command (`archive loglist` instead of `archive log list`).
+  - **Fix**: Use the correct command: `archive log list`.
+- **SP2-0717: illegal SHUTDOWN option**
+  - **Cause**: Incorrect spelling of `IMMEDIATE` (e.g., `IMMEDIATELY` or `IMEEDIATE`).
+  - **Fix**: Use `SHUTDOWN IMMEDIATE`.
+- **RMAN-01009: syntax error: found "identifier": expecting one of: "archivelog"**
+  - **Cause**: Misspelled `ARCHIVELOG` as `ARHIVELOG`.
+  - **Fix**: Correct the spelling: `BACKUP DATABASE PLUS ARCHIVELOG`.
+- **RMAN: command not found**
+  - **Cause**: Case-sensitive command (`RMAN` instead of `rman`).
+  - **Fix**: Use lowercase `rman`.
+
+## Notes
+
+- Ensure the database is in archive log mode before performing RMAN backups to enable point-in-time recovery.
+- Backups are stored in `/opt/oracle/product/19c/dbhome_1/dbs/`. Ensure sufficient disk space in this directory.
+- The database must be in `MOUNT` state to enable archive log mode but can be in `OPEN` or `MOUNT` state for RMAN backups.
+- Regularly verify backups using `LIST BACKUP` to ensure they are available for recovery.
+
+## References
+
+- [Oracle Database Backup and Recovery User's Guide](https://docs.oracle.com/en/database/oracle/oracle-database/19/bradv/)
+- [Oracle RMAN Commands Reference](https://docs.oracle.com/en/database/oracle/oracle-database/19/rcmrf/)
+
+<xaiArtifact artifact_id="0934c17e-6a56-4981-8587-d0b34991cdcb" artifact_version_id="57eabdb1-55f7-49ce-86c6-daf3e9b0c26c" title="readme.md" contentType="text/markdown">
+
+# Employee Database Management
+
+This document provides an overview of the SQL operations performed on the `EMPLOYEE` table in an Oracle database, as executed by the user `C##TESTUSER`. The commands demonstrate basic database operations, including connecting to the database, querying, inserting, updating, and using flashback features to track changes.
+
+## Prerequisites
+
+- **Oracle Database**: Ensure you have access to an Oracle database instance.
+- **User Credentials**: The user `C##TESTUSER` with appropriate permissions is required.
+- **SQL\*Plus or Similar Tool**: Used to execute SQL commands.
+
+## Database Operations
+
+### 1. Connecting to the Database
+
+The user connects to the database as `C##TESTUSER`. Initially, a login attempt fails due to an invalid password, but a subsequent attempt succeeds.
+
+```sql
+SQL> connect c##testuser;
+Enter password:
+Connected.
+SQL> show user;
+USER is "C##TESTUSER"
+```
+
+### 2. Table Structure
+
+The `EMPLOYEE` table contains the following columns:
+
+- `ID`: Numeric identifier for the employee.
+- `NAME`: Employee's name (varchar).
+- `AGE`: Employee's age (numeric).
+
+List the tables owned by the user:
+
+```sql
+SQL> SELECT table_name FROM user_tables;
+TABLE_NAME
+----------
+EMPLOYEE
+```
+
+### 3. Querying Data
+
+Retrieve all records from the `EMPLOYEE` table:
+
+```sql
+SQL> SELECT * FROM employee;
+   ID NAME       AGE
+---- ---------- ---
+    5 Abishek    22
+    4 Rama       23
+    1 Ram        25
+```
+
+Filter records based on conditions:
+
+- Employees with age greater than 22:
+
+```sql
+SQL> SELECT * FROM employee WHERE age > 22;
+   ID NAME       AGE
+---- ---------- ---
+    4 Rama       23
+    1 Ram        25
+```
+
+- Employee with age equal to 22:
+
+```sql
+SQL> SELECT * FROM employee WHERE age = 22;
+   ID NAME       AGE
+---- ---------- ---
+    5 Abishek    22
+```
+
+- Employee with name 'Abi':
+
+```sql
+SQL> SELECT * FROM employee WHERE name = 'Abi';
+   ID NAME       AGE
+---- ---------- ---
+    5 Abi        22
+```
+
+### 4. Inserting Data
+
+Insert a new employee record. Note that the first attempt fails due to incorrect syntax (double quotes instead of single quotes for the `NAME` column):
+
+```sql
+SQL> INSERT INTO employee VALUES (5, "Abi", 22);
+ERROR at line 1:
+ORA-00984: column not allowed here
+```
+
+Corrected insert statement:
+
+```sql
+SQL> INSERT INTO employee VALUES (5, 'Abi', 22);
+1 row created.
+```
+
+### 5. Updating Data
+
+Update the name of the employee with `ID = 5`. The first attempt fails due to missing the `SET` keyword:
+
+```sql
+SQL> UPDATE employee name = "Abishek" WHERE id = "5";
+ERROR at line 1:
+ORA-00971: missing SET keyword
+```
+
+Corrected update statement:
+
+```sql
+SQL> UPDATE employee
+     SET name = 'Abishek'
+     WHERE id = 5;
+1 row updated.
+```
+
+Another update to change the name to 'Abiii':
+
+```sql
+SQL> UPDATE employee
+     SET name = 'Abiii'
+     WHERE id = 5;
+1 row updated.
+```
+
+### 6. Flashback Queries
+
+Use Oracle's flashback features to query historical data.
+
+- Query the `EMPLOYEE` table as of a specific timestamp:
+
+```sql
+SQL> SELECT *
+     FROM employee
+     AS OF TIMESTAMP TO_TIMESTAMP('2025-08-20 08:00:00', 'YYYY-MM-DD HH24:MI:SS');
+   ID NAME       AGE
+---- ---------- ---
+    4 Rama       23
+    1 Ram        25
+```
+
+- Query the `EMPLOYEE` table as of 5 minutes ago:
+
+```sql
+SQL> SELECT * FROM employee AS OF TIMESTAMP (SYSTIMESTAMP - INTERVAL '5' MINUTE);
+   ID NAME       AGE
+---- ---------- ---
+    4 Rama       23
+    1 Ram        25
+```
+
+- Query the `NAME` column for `ID = 5` as of a specific SCN (System Change Number):
+
+```sql
+SQL> SELECT name FROM employee AS OF SCN 2398505 WHERE id = 5;
+NAME
+----------
+Abishek
+```
+
+- Track changes to the `NAME` column for `ID = 5` using the `VERSIONS BETWEEN` clause:
+
+```sql
+SQL> SELECT versions_startscn,
+            versions_endscn,
+            versions_xid,
+            name
+     FROM employee VERSIONS BETWEEN SCN MINVALUE AND MAXVALUE
+     WHERE id = 5;
+VERSIONS_STARTSCN VERSIONS_ENDSCN VERSIONS_XID      NAME
+----------------- --------------- ----------------- ----------
+          2400437                           05001B00A9030000 Abiii
+          2398499         2400437 09000E00AA030000 Abishek
+```
+
+### 7. Database Administration
+
+Check the current SCN as a `SYSDBA` user:
+
+```sql
+SQL> connect / as sysdba;
+Connected.
+SQL> SELECT current_scn FROM v$database;
+CURRENT_SCN
+-----------
+    2398505
+```
+
+### 8. Common Errors and Fixes
+
+- **ORA-01017: invalid username/password**: Ensure correct credentials are provided.
+- **ORA-00984: column not allowed here**: Use single quotes (`'`) for string literals instead of double quotes (`"`).
+- **ORA-00971: missing SET keyword**: Include the `SET` keyword in `UPDATE` statements.
+- **ORA-00906: missing left parenthesis**: Correct syntax for table names (e.g., remove colon in `TABLE:`).
+- **ORA-01756: quoted string not properly terminated**: Ensure proper formatting in `TO_TIMESTAMP`.
+- **ORA-00904: invalid identifier**: Correct typos (e.g., `MINIMAVLUE` to `MINVALUE`).
+- **SP2-0734/SP2-0042**: Commands like `arhchive log list` or `ls` are invalid in SQL\*Plus. Use correct SQL or database commands.
+
+## Notes
+
+- The `EMPLOYEE` table must have versioning enabled (e.g., via `FLASHBACK ARCHIVE`) to support flashback queries.
+- Always commit changes after `INSERT` or `UPDATE` operations to make them permanent:
+
+```sql
+SQL> COMMIT;
+Commit complete.
+```
+
+- Use single quotes for string literals in Oracle SQL to avoid syntax errors.
+
+## Conclusion
+
+This README outlines the basic operations performed on the `EMPLOYEE` table, including data manipulation and historical data retrieval using Oracle's flashback features. Ensure proper syntax and permissions when executing these commands.
+
+</xaiArtifact>

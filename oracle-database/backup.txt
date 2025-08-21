@@ -1,0 +1,314 @@
+======== BACKUP =========
+Command
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Aug 19 02:22:54 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Enter user-name: sys as sysdba
+Enter password: 
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> archive loglist
+SP2-0734: unknown command beginning "archive lo..." - rest of line ignored.
+SQL> archive log list
+Database log mode	       No Archive Mode
+Automatic archival	       Disabled
+Archive destination	       /opt/oracle/product/19c/dbhome_1/dbs/arch
+Oldest online log sequence     6
+Current log sequence	       8
+SQL> shutdown immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> startup mount;
+ORACLE instance started.
+
+Total System Global Area 2432692416 bytes
+Fixed Size		    9138368 bytes
+Variable Size		  570425344 bytes
+Database Buffers	 1845493760 bytes
+Redo Buffers		    7634944 bytes
+Database mounted.
+SQL> ALTER database archivelog;    
+
+Database altered.
+
+SQL> archive loglist;
+SP2-0734: unknown command beginning "archive lo..." - rest of line ignored.
+SQL> archive log list
+Database log mode	       Archive Mode
+Automatic archival	       Enabled
+Archive destination	       /opt/oracle/product/19c/dbhome_1/dbs/arch
+Oldest online log sequence     6
+Next log sequence to archive   8
+Current log sequence	       8
+SQL> exit;
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman
+
+Recovery Manager: Rele
+
+
+To opem RMAN: rman at the bash
+To check loglist: archive log list
+First shutdown by: shutdown immediate
+Start datbase: startup mount;
+Alter the database: ALTER database archivelog; 
+
+To Open recovery manager complete
+
+To open: RMAN TARGET /;
+TO she the backup: LIST BACKUP;
+
+LIST BACKUP OF DATABASE;
+SHOW BACKUP OF DATABASE;
+
+
+
+starting backup: ALTER database archivelog; 
+
+
+CODE FINALLY:
+
+❯ sudo docker start oracle19c-new
+[sudo] password for virtualabishek:        
+oracle19c-new
+❯ sudo docker exec -it oracle19c-new bash
+bash-4.2$ sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Aug 20 01:23:04 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Enter user-name: sys as sysdba
+Enter password: 
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> archive log list
+Database log mode	       Archive Mode
+Automatic archival	       Enabled
+Archive destination	       /opt/oracle/product/19c/dbhome_1/dbs/arch
+Oldest online log sequence     7
+Next log sequence to archive   9
+Current log sequence	       9
+SQL> exit;
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Aug 20 01:26:32 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+RMAN> exit;
+
+
+Recovery Manager complete.
+bash-4.2$ RMAN TARGET /
+bash: RMAN: command not found
+bash-4.2$ exit;
+exit
+❯ sudo docker start oracle19c-new
+oracle19c-new
+❯ sudo docker exec -it oracle19c-new bash
+bash-4.2$ sqlplus           
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Aug 20 01:31:37 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Enter user-name: sys as sysdba
+Enter password: 
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> SHUTDOWN IMMEDIATELY;
+SP2-0717: illegal SHUTDOWN option
+SQL> SHUTDOWN IMEEDIATE;
+SP2-0717: illegal SHUTDOWN option
+SQL> SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> STARTUP MOUNT;
+ORACLE instance started.
+
+Total System Global Area 2432692416 bytes
+Fixed Size		    9138368 bytes
+Variable Size		  570425344 bytes
+Database Buffers	 1845493760 bytes
+Redo Buffers		    7634944 bytes
+Database mounted.
+SQL> ALTER database archivelog;
+
+Database altered.
+
+SQL> exit;
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Aug 20 01:33:24 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCLCDB (DBID=2979897351, not open)
+
+RMAN> LIST BACKUP;
+
+using target database control file instead of recovery catalog
+specification does not match any backup in the repository
+
+RMAN> BACKUP DATABASE PLUS ARHIVELOG;
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00558: error encountered while parsing input commands
+RMAN-01009: syntax error: found "identifier": expecting one of: "archivelog"
+RMAN-01008: the bad identifier was: ARHIVELOG
+RMAN-01007: at line 1 column 22 file: standard input
+
+RMAN> BACKUP DATABASE PLUS ARCHIVELOG;
+
+
+Starting backup at 20-AUG-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=622 device type=DISK
+channel ORA_DISK_1: starting archived log backup set
+channel ORA_DISK_1: specifying archived log(s) in backup set
+input archived log thread=1 sequence=8 RECID=1 STAMP=1209605035
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0141i7hg_1_1 tag=TAG20250820T013440 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:03
+Finished backup at 20-AUG-25
+
+Starting backup at 20-AUG-25
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00001 name=/opt/oracle/oradata/ORCLCDB/system01.dbf
+input datafile file number=00003 name=/opt/oracle/oradata/ORCLCDB/sysaux01.dbf
+input datafile file number=00004 name=/opt/oracle/oradata/ORCLCDB/undotbs01.dbf
+input datafile file number=00013 name=/opt/oracle/oradata/ORCLCDB/ilovespace.dbf
+input datafile file number=00007 name=/opt/oracle/oradata/ORCLCDB/users01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0241i7hj_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:15
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00010 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/sysaux01.dbf
+input datafile file number=00009 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/system01.dbf
+input datafile file number=00011 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/undotbs01.dbf
+input datafile file number=00012 name=/opt/oracle/oradata/ORCLCDB/ORCLPDB1/users01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0341i7i3_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00006 name=/opt/oracle/oradata/ORCLCDB/pdbseed/sysaux01.dbf
+input datafile file number=00005 name=/opt/oracle/oradata/ORCLCDB/pdbseed/system01.dbf
+input datafile file number=00008 name=/opt/oracle/oradata/ORCLCDB/pdbseed/undotbs01.dbf
+channel ORA_DISK_1: starting piece 1 at 20-AUG-25
+channel ORA_DISK_1: finished piece 1 at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/0441i7ia_1_1 tag=TAG20250820T013443 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:07
+Finished backup at 20-AUG-25
+
+Starting backup at 20-AUG-25
+using channel ORA_DISK_1
+specification does not match any archived log in the repository
+backup cancelled because there are no files to backup
+Finished backup at 20-AUG-25
+
+Starting Control File and SPFILE Autobackup at 20-AUG-25
+piece handle=/opt/oracle/product/19c/dbhome_1/dbs/c-2979897351-20250820-00 comment=NONE
+Finished Control File and SPFILE Autobackup at 20-AUG-25
+
+RMAN> LIST BACKUP;
+
+
+List of Backup Sets
+===================
+
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+1       191.32M    DISK        00:00:01     20-AUG-25      
+        BP Key: 1   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013440
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0141i7hg_1_1
+
+  List of Archived Logs in backup set 1
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    8       2284316    15-AUG-25 2387814    20-AUG-25
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+2       Full    1.22G      DISK        00:00:08     20-AUG-25      
+        BP Key: 2   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0241i7hj_1_1
+  List of Datafiles in backup set 2
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  1       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/system01.dbf
+  3       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/sysaux01.dbf
+  4       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/undotbs01.dbf
+  7       Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/users01.dbf
+  13      Full 2394960    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ilovespace.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+3       Full    489.97M    DISK        00:00:03     20-AUG-25      
+        BP Key: 3   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0341i7i3_1_1
+  List of Datafiles in backup set 3
+  Container ID: 3, PDB Name: ORCLPDB1
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  9       Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/system01.dbf
+  10      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/sysaux01.dbf
+  11      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/undotbs01.dbf
+  12      Full 2394018    20-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/ORCLPDB1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+4       Full    555.95M    DISK        00:00:03     20-AUG-25      
+        BP Key: 4   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013443
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/0441i7ia_1_1
+  List of Datafiles in backup set 4
+  Container ID: 2, PDB Name: PDB$SEED
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  5       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/system01.dbf
+  6       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/sysaux01.dbf
+  8       Full 2156056    11-AUG-25              NO    /opt/oracle/oradata/ORCLCDB/pdbseed/undotbs01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+5       Full    17.95M     DISK        00:00:00     20-AUG-25      
+        BP Key: 5   Status: AVAILABLE  Compressed: NO  Tag: TAG20250820T013513
+        Piece Name: /opt/oracle/product/19c/dbhome_1/dbs/c-2979897351-20250820-00
+  SPFILE Included: Modification time: 20-AUG-25
+  SPFILE db_unique_name: ORCLCDB
+  Control File Included: Ckp SCN: 2394960      Ckp time: 20-AUG-25
+
+RMAN> 

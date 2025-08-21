@@ -1,0 +1,264 @@
+SQL> connect c##testuser;
+Enter password: 
+ERROR:
+ORA-01017: invalid username/password; logon denied
+
+
+Warning: You are no longer connected to ORACLE.
+SQL> connect c##testuser;
+Enter password: 
+Connected.
+SQL> show user;
+USER is "C##TESTUSER"
+SQL> SELECT table_name FROM user_tables;
+
+TABLE_NAME
+--------------------------------------------------------------------------------
+EMPLOYEE
+
+SQL> select * FROM EMPLOYEE;
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> INSERT INTO employee VALUES (5, "Abi" , 22);
+INSERT INTO employee VALUES (5, "Abi" , 22)
+                                *
+ERROR at line 1:
+ORA-00984: column not allowed here
+
+
+SQL> INSERT INTO employee VALUES (5, 'Abi', 22);
+
+1 row created.
+
+SQL> SELECT * FROM employee;
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 5 Abi							      22
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> SELECT * FROM employee WHERE age > 22;
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> SELECT * FROM employee WHERE age = 22
+  2  ;
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 5 Abi							      22
+
+SQL> SELECT * FROM employee WHERE name = 'Abi';
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 5 Abi							      22
+
+SQL> SELECT * FROM employee AS OF TIMESTAMP TO TIMESTAMP('2025-08-21);
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> UPDATE employee name = "Abishek" WHERE id = "5";
+UPDATE employee name = "Abishek" WHERE id = "5"
+                     *
+ERROR at line 1:
+ORA-00971: missing SET keyword
+
+
+SQL> UPDATE employee
+SET name = 'Abishek'
+WHERE id = 5;
+  2    3  
+1 row updated.
+
+SQL> show user;
+USER is "C##TESTUSER"
+SQL> select * FROM TABLE:
+  2  ;
+select * FROM TABLE:
+                   *
+ERROR at line 1:
+ORA-00906: missing left parenthesis
+
+
+SQL> SELECT * FROM employee;
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 5 Abishek						      22
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> arhchive log list
+SP2-0734: unknown command beginning "arhchive l..." - rest of line ignored.
+SQL> UPDATE employee
+SET name = 'Abishek'
+WHERE id = 5;
+  2    3  
+1 row updated.
+
+SQL> ls
+SP2-0042: unknown command "ls" - rest of line ignored.
+SQL> SELECT * FROM employee AS OF TIMESTAMP TO_TIMESTAMP('2025-08-20 08:00:00' 'YY-MM-DD HH24:MI:SS');
+SELECT * FROM employee AS OF TIMESTAMP TO_TIMESTAMP('2025-08-20 08:00:00' 'YY-MM-DD HH24:MI:SS')
+                                                                          *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> SELECT * 
+FROM employee 
+AS OF TIMESTAMP TO_TIMESTAMP('2025-08-20 08:00:00', 'YYYY-MM-DD HH24:MI:SS');
+  2    3  
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> SELECT * FROM employee AS OF TIMESTAMP (SYSTIMESTAMP - INTERVAL '5' MINUTE);
+
+	ID NAME 						     AGE
+---------- -------------------------------------------------- ----------
+	 4 Rama 						      23
+	 1 Ram							      25
+
+SQL> connect / as sysdba;
+Connected.
+SQL> SELECT current_scn from v$database;
+
+CURRENT_SCN
+-----------
+    2398505
+
+SQL> connect c##testuser test123; 
+SP2-0306: Invalid option.
+Usage: CONN[ECT] [{logon|/|proxy} [AS {SYSDBA|SYSOPER|SYSASM|SYSBACKUP|SYSDG|SYSKM|SYSRAC}] [edition=value]]
+where <logon> ::= <username>[/<password>][@<connect_identifier>]
+      <proxy> ::= <proxyuser>[<username>][/<password>][@<connect_identifier>]
+SQL> connect c##testuser;
+Enter password: 
+Connected.
+SQL> SELECT name from employee as of scn 2398505 where id = 5;
+
+NAME
+--------------------------------------------------
+Abishek
+
+SQL> SELECT versions startscn,
+  2  version endscn,
+  3  version xid,
+  4  
+SQL> ;
+  1  SELECT versions startscn,
+  2  version endscn,
+  3* version xid,
+SQL> SELECT versions startscn,
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00936: missing expression
+
+
+SQL> SELECT versions_startscn,
+  2  versions_endscn,
+  3  versions_xid,
+  4  name FROM employee
+  5  VERSIONS BETWEEN SCN MINIMAVLUE AND MAXVALUE WHERE id = 5;
+VERSIONS BETWEEN SCN MINIMAVLUE AND MAXVALUE WHERE id = 5
+                     *
+ERROR at line 5:
+ORA-00904: "MINIMAVLUE": invalid identifier
+
+
+SQL> SELECT versions_startscn,
+  2  versions_endscn,
+  3  versions_xid,
+  4  ^C;
+
+SQL> SELECT versions_startscn,
+  2  ^C^C
+
+SQL> SELECT versions_startscn,
+  2  versions_endscn,
+  3  versions_xid,
+  4  name from employee,
+  5  VERSIONS BETWEEN SCN MINIVALUE AND MAXVALUE WHERE id = 5;
+VERSIONS BETWEEN SCN MINIVALUE AND MAXVALUE WHERE id = 5
+         *
+ERROR at line 5:
+ORA-00933: SQL command not properly ended
+
+
+SQL> SELECT versions_startscn,
+       versions_endscn,
+       versions_xid,
+       name
+FROM   employee VERSIONS BETWEEN SCN MINVALUE AND MAXVALUE
+WHERE  id = 5;
+  2    3    4    5    6  
+VERSIONS_STARTSCN VERSIONS_ENDSCN VERSIONS_XID
+----------------- --------------- ----------------
+NAME
+--------------------------------------------------
+	  2398499		  09000E00AA030000
+Abishek
+
+
+SQL> SELECT versions_startscn,
+       versions_endscn,
+       versions_xid,
+       name
+FROM   employee VERSIONS BETWEEN SCN MINVALUE AND MAXVALUE
+WHERE  id = 5;
+  2    3    4    5    6  
+VERSIONS_STARTSCN VERSIONS_ENDSCN VERSIONS_XID
+----------------- --------------- ----------------
+NAME
+--------------------------------------------------
+	  2398499		  09000E00AA030000
+Abishek
+
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> UPDATE employee 
+  2  SET name = 'Abiii'
+  3  WHERE id = 5;
+
+1 row updated.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT versions_startscn,
+       versions_endscn,
+       versions_xid,
+       name
+FROM   employee VERSIONS BETWEEN SCN MINVALUE AND MAXVALUE
+WHERE  id = 5;
+  2    3    4    5    6  
+VERSIONS_STARTSCN VERSIONS_ENDSCN VERSIONS_XID
+----------------- --------------- ----------------
+NAME
+--------------------------------------------------
+	  2400437		  05001B00A9030000
+Abiii
+
+	  2398499	  2400437 09000E00AA030000
+Abishek
+
+
+SQL> 
