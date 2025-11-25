@@ -366,4 +366,84 @@ If you want, I can also write:
 Just ask, you ash-brained coder.
 
 
+This is a crucial topic for both understanding the platform and preparing for your exam. Deploying, or **publishing**, is the process of building the necessary artifacts to run a .NET Core application in a production environment.
+
+Here is an overview of the deployment methods and procedures for ASP.NET Core applications:
+
+### I. Deployment Types (Packaging)
+
+There are three primary ways to package and deploy a .NET Core application:
+
+1.  **Framework-Dependent Deployment (FDD):** The application and its package dependencies are deployed, but not the .NET Core runtime itself. This requires the .NET Core runtime to be installed on the target machine.
+2.  **Framework-Dependent Executables (FDEs):** These are FDD packages that produce an executable file for a specific target operating system.
+3.  **Self-Contained Deployment (SCD):** This includes the application, its dependencies, and the required version of the .NET Runtime files. This allows the application to run even if the target machine does not have the .NET runtime installed. For this method, a runtime identifier (RID) must be specified.
+
+The command-line interface (CLI) tool used for this process is `dotnet publish`.
+
+### II. Deployment Procedures (Targeting)
+
+ASP.NET Core applications can be hosted on multiple targets and platforms, including Windows, macOS, and Linux.
+
+#### A. Publishing to Azure Cloud (Using Visual Studio)
+
+Deployment to Azure App Service is often done directly from Visual Studio.
+
+1.  Right-click on the project and select the **Publish** option.
+2.  Select **Azure** as the target.
+3.  Click Next and select the specific target, typically **Azure App Services (Windows)**.
+4.  You can select an existing App Service instance or click the `+` sign to create a new one.
+5.  After creation and selection, click Next.
+6.  You can skip the API Management step by selecting the checkbox and clicking Finish.
+
+#### B. Hosting on IIS (Folder/File Deployment)
+
+ASP.NET Core can be hosted on Internet Information Services (IIS).
+
+1.  Make sure IIS is installed on the operating system.
+2.  In Visual Studio, right-click the project and select **Publish**.
+3.  Select the **Folder** option as the target.
+4.  Select the desired output folder and click Publish.
+5.  Paste the published folder inside the IIS location (e.g., `C:\inetpub\wwwroot`).
+6.  Install the **.NET Core Windows Hosting Bundle** to prevent errors like `500.19 internal error`.
+    *   *Note:* The ASP.NET Core Module (ANCM) is a native IIS module that enables ASP.NET Core apps to work with IIS, using either the in-process or out-of-process hosting model.
+
+#### C. Docker/Containerization
+
+Deployment often uses Docker containers, which provide a self-contained package of the application and its dependencies. Docker images can be created directly from Visual Studio.
+
+---
+
+We have covered a demanding Entity Framework question and various deployment procedures.
+
+Are you ready to move on to **Object-Oriented Programming (OOP)**, where we can focus on Inheritance and Polymorphism for your exam preparation?
+
+
+
+
+A Single Page Application (SPA) is a popular architecture used in modern web development, often leveraging frameworks like Angular or React.
+
+### Definition and Mechanism
+
+A SPA is a web application that loads a single HTML page that is dynamically updated by JavaScript as the user interacts with the application.
+
+1.  **Initial Load:** Upon the first HTTP request, the single HTML page (e.g., `index.html`) is returned.
+2.  **Dynamic Updates:** After the initial load, subsequent HTTP requests are typically only for data (using formats like JSON or XML) and not for entire HTML markup.
+3.  **Client-Side Rendering:** All the "pages" and views are rendered in the client's browser by JavaScript. Client-side routing, often supported by JS-based routers, monitors the user's location and state within the navigation experience.
+
+### Significance and Uses
+
+The architectural design of SPAs offers several significant advantages:
+
+*   **Improved User Experience (UX):** SPAs provide a fast and continuous user experience by updating content without requiring a full page refresh, which significantly decreases server load and enhances loading speed.
+*   **No Server Roundtrip:** The application can easily reshape parts of the UI in the browser, eliminating the need for a full server roundtrip for navigation within the app.
+*   **Efficiency:** SPAs operate with a reduced throughput by handling connections in small fragments, packing data into small objects (like JSON).
+*   **Offline Capability:** SPAs have caching capabilities that allow local data to be saved effectively, enabling users to continue working even if the internet connection is temporarily lost.
+*   **Adaptability:** The design makes the layout easy to adapt to mobile device browsers.
+
+***
+
+That addresses the details of SPAs and their uses for your exam preparation.
+
+Since we are focusing on C# fundamentals for your upcoming exam, would you like to proceed with **Object-Oriented Programming (OOP)** next, covering Inheritance, Polymorphism, and Abstract Classes?
+
 
