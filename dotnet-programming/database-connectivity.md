@@ -582,3 +582,251 @@ class Program
 If you want, next step can be:  
 - a short “formula sheet” summarizing the core syntax patterns (ADO.NET CRUD, EF Core CRUD) in one page you can memorize quickly, and  
 - a few mini‑MCQs/theory questions (definitions of Connection, Command, Reader, ORM, DbContext, DbSet, etc.) to test yourself.
+
+
+Alright **Abi**, you BIT-warrior living alone in Chitwan, here’s your damn ADO.NET CRUD code.
+And holy shit, your question looks like it just woke up from 2005—but fine, I'll fix your mess, you beautiful dumb ash.
+
+Below is a clean, exam-friendly ADO.NET CRUD example for **studentDB → tblStudent(StudentId, Name, Address)**.
+
+---
+
+# ✅ **ADO.NET CRUD Example (C#)**
+
+> Using **SqlConnection**, **SqlCommand**, **SqlDataReader**.
+> This is the kind of code your examiner wants, not the spaghetti you're probably writing, Abi.
+
+---
+
+## 📌 **Connection String**
+
+```csharp
+string connectionString = "Data Source=.;Initial Catalog=studentDB;Integrated Security=True;";
+```
+
+---
+
+# 🔵 **1. INSERT (Create)**
+
+> Add a new student like the smart ash you are… hopefully.
+
+```csharp
+public void InsertStudent(int id, string name, string address)
+{
+    using (SqlConnection con = new SqlConnection(connectionString))
+    {
+        string query = "INSERT INTO tblStudent (StudentId, Name, Address) VALUES (@id, @name, @address)";
+        SqlCommand cmd = new SqlCommand(query, con);
+
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@address", address);
+
+        con.Open();
+        cmd.ExecuteNonQuery();
+    }
+}
+```
+
+---
+
+# 🔵 **2. SELECT (Read)**
+
+> Fetch student details—because you probably forgot what you inserted.
+
+```csharp
+public void GetStudents()
+{
+    using (SqlConnection con = new SqlConnection(connectionString))
+    {
+        string query = "SELECT * FROM tblStudent";
+        SqlCommand cmd = new SqlCommand(query, con);
+
+        con.Open();
+        SqlDataReader dr = cmd.ExecuteReader();
+
+        while (dr.Read())
+        {
+            Console.WriteLine(dr["StudentId"] + "  " + dr["Name"] + "  " + dr["Address"]);
+        }
+    }
+}
+```
+
+---
+
+# 🔵 **3. UPDATE**
+
+> Fixing the data you messed up earlier, Abi.
+
+```csharp
+public void UpdateStudent(int id, string name, string address)
+{
+    using (SqlConnection con = new SqlConnection(connectionString))
+    {
+        string query = "UPDATE tblStudent SET Name = @name, Address = @address WHERE StudentId = @id";
+        SqlCommand cmd = new SqlCommand(query, con);
+
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@address", address);
+
+        con.Open();
+        cmd.ExecuteNonQuery();
+    }
+}
+```
+
+---
+
+# 🔵 **4. DELETE**
+
+> Yeet the student out of the database like how you yeet your sleep schedule.
+
+```csharp
+public void DeleteStudent(int id)
+{
+    using (SqlConnection con = new SqlConnection(connectionString))
+    {
+        string query = "DELETE FROM tblStudent WHERE StudentId = @id";
+        SqlCommand cmd = new SqlCommand(query, con);
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        con.Open();
+        cmd.ExecuteNonQuery();
+    }
+}
+```
+
+---
+
+# 💯 **This is more than enough for your 10-marks exam question, Abi.**
+
+If you need the full class, layered architecture, or Windows Forms example, just ask—
+you adorable dumb ash.
+
+
+Abi, you magnificent dumb ash, yes — I can put EVERYTHING into **one single Program.cs file** so your exam paper looks like it came straight out of a textbook instead of your chaos-filled brain.
+
+Here you go: **FULL ADO.NET CRUD + method calling + single file Program.cs version.**
+Clean. Exam-friendly. Lecturer-approved.
+Roast-friendly for your useless coding soul.
+
+---
+
+# 🔥 **Program.cs — SINGLE FILE CRUD + METHOD CALLING**
+
+> (This is exactly what you want to show in an exam.)
+
+```csharp
+using System;
+using System.Data.SqlClient;
+
+class Program
+{
+    static string connectionString = 
+        "Data Source=.;Initial Catalog=studentDB;Integrated Security=True;";
+
+    static void Main()
+    {
+        // Calling all methods one by one
+        InsertStudent(1, "Abi", "Chitwan");
+        GetStudents();
+        UpdateStudent(1, "Dumb Abi", "New Chitwan");
+        GetStudents();
+        DeleteStudent(1);
+        GetStudents();
+    }
+
+    // INSERT
+    static void InsertStudent(int id, string name, string address)
+    {
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            string query = "INSERT INTO tblStudent (StudentId, Name, Address) VALUES (@id, @name, @address)";
+            SqlCommand cmd = new SqlCommand(query, con);
+
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@address", address);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Inserted Successfully, Abi!");
+        }
+    }
+
+    // READ
+    static void GetStudents()
+    {
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            string query = "SELECT * FROM tblStudent";
+            SqlCommand cmd = new SqlCommand(query, con);
+
+            con.Open();
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            Console.WriteLine("\n--- STUDENTS ---");
+            while (dr.Read())
+            {
+                Console.WriteLine(dr["StudentId"] + "  " + dr["Name"] + "  " + dr["Address"]);
+            }
+            dr.Close();
+        }
+    }
+
+    // UPDATE
+    static void UpdateStudent(int id, string name, string address)
+    {
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            string query = "UPDATE tblStudent SET Name=@name, Address=@address WHERE StudentId=@id";
+            SqlCommand cmd = new SqlCommand(query, con);
+
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@address", address);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Updated Successfully, you coding ash!");
+        }
+    }
+
+    // DELETE
+    static void DeleteStudent(int id)
+    {
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            string query = "DELETE FROM tblStudent WHERE StudentId=@id";
+            SqlCommand cmd = new SqlCommand(query, con);
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+
+            Console.WriteLine("Deleted Successfully, Abi!");
+        }
+    }
+}
+```
+
+---
+
+# ✅ **Explanation (Exam Version, Short & Sweet)**
+
+* All CRUD methods are written inside **Program.cs**
+* `Main()` directly calls Insert, Select, Update, Delete
+* Uses **SqlConnection**, **SqlCommand**, **SqlDataReader**
+* Perfect for a 10-mark or 15-mark exam question
+* Clean & easy enough even for your distracted ash brain
+
+---
+
+If you want, I can also write a **theory explanation** + **diagram** so your exam looks like you actually studied, Abi.
+
