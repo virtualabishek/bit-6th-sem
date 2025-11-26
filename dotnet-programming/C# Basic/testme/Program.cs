@@ -1,104 +1,90 @@
-
-Console.WriteLine("Hello, World!");
-Console.WriteLine(3 + 4);
-
-string fname = "Hari";
-
-Console.WriteLine(fname);
-
-const double pi = 3.17;
-
-Console.WriteLine(pi);
-
-// int num = 2;
-
-
-string firstName = "Abi";
-string lastName = "Fix You";
-
-Console.WriteLine("Name is: " + firstName + " " + lastName);
-
-int a = 10, b = 20;
-
-string name = "Test User";
-
-Console.WriteLine(name);
-// int sum = a + b;
-
-Console.WriteLine("The sum is " + (a + b));
-
-
-// Dotnet has implicit casting. if i have something, i can change that automatically to another
-
-
-
-double mynum = 3.222;
-
-
-Console.WriteLine(mynum);
-
-double num1 = 0.1;
-double num2 = 0.2;
-
-if (num1 + num2 == 0.3)
+﻿using System;
+using System.MySql.Data.SqlClient;
+// Assume a database named studentDB and a atble inside it names 
+// tblstudent {StudentId (primary key), name, address}. 
+// Write ADO.net code for CRUD operation.
+class Program 
 {
-    Console.WriteLine($"{a} + {b} equals 0.3");
+  static string connection = "Server=localhost;Port=3306;Database=exam;Uid=root;Password=imp2083";
+  static void Main() 
+  {
+    InsertStudent(1, "Abishek", "Bharatpur");
+    InsertStudent(2, "Abinash", "Lamjung");
+    ReadOperation();
+    UpdateOperation(1, "Gorkha");
+    ReadOperation();
+    DeleteStudent(2);
+    ReadOperation();
+    InsertStudent(3, "Mommmmm", "Heart");
+    ReadOperation();
+
+  }
+  // CREATE operation
+  public void InsertStudent (int id, string name, string address) 
+  {
+    using MySqlConnection conn = new MySqlConnection(connection) 
+    {
+      string sql = "INSERT INTO tblstudent (StudentId, name, address) VALUES (@id, @name, @address)";
+      using MySqlCommand cmd = new MySqlCommand(conn, sql) 
+      {
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("name", name);
+        cmd.Parameters.AddWithValue("address", address);
+        conn.Open();
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Executed Successfully.");
+      }
+    }
+  }
+
+  // Update operation
+  public void UpdateOperation (int id, string address) 
+  {
+    using MySqlConnection conn = new MySqlConnection(connection) 
+    {
+      string sql = "UPDATE tblstudent SET address = @address WHERE studentId = @id";
+      using MySqlCommand cmd = new MySqlCommand(sql, conn) 
+      {
+        cmd.Parameters.AddWithValue("@address", address);
+        cmd.Parameters.AddWithValue("@id", id);
+        conn.Open();
+        string row = cmd.ExecuteNonQuery();
+        Console.WriteLine(row + "Updated. Done Update operation");
+      }
+    }
+  }
+
+  // DELETE operation
+  public void DeleteStudent (int id) 
+  {
+    using MySqlConnection conn = new MySqlConnection(connection) 
+    {
+      string sql = "DELETE FROM tblstudent WHERE studentId = @id";
+      using MySqlCommand cmd = new MySqlCommand(sql, conn) 
+      {
+        cmd.Parameters.AddWithValue("@id", id);
+        conn.Open();
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Deleted the student Successfully.");
+      }
+    }
+  }
+
+  // Read Operation.
+  public void ReadOperation() 
+  {
+  using MySqlConnection conn = new MySqlConnection(connection) 
+  {
+    string sql = "SELECT * FROM tblstudent";
+    using MySqlCommand cmd = new MySqlCommand(sql, conn) 
+    {
+      conn.Open();
+      MySqlDataReader data = cmd.ExecuteReader();
+      Console.WriteLine(data);
+      while(data.Read()) {
+        Console.WriteLine(data["studentId"] + data["name"] + data["address"]);
+      }
+    }
+  }
+  }
 }
-else
-{
-    Console.WriteLine($"{a} + {b} equals 0.3");
-}
-
-
-// Console.WriteLine("Enter your username: ");
-// string userName = Console.ReadLine();
-
-// Console.WriteLine("Your name is: " + userName);
-
-// // Console always take input as the string so need to convert using the type implicit
-
-// Console.WriteLine("Enter the number");
-// int num = Convert.ToInt32(Console.ReadLine());
-
-// Console.WriteLine("You just entered: " + num);
-
-string[] nameC = new String[5];
-
-nameC = ["Ram", "Hari"];
-Console.WriteLine(nameC[1]);
-
-string[] cars = { "Volvo", "BMW", "Ford", "Mazda" };
-Array.Sort(cars);
-foreach (string i in cars)
-{
-    Console.WriteLine(i);
-}
-
-int[,] numbers = { { 1, 4, 2 }, { 3, 6, 8 } };
-
-foreach (int i in numbers)
-{
-    Console.WriteLine(i);
-}
-
-// Method Overloading
-
-// static int PlusMethod(int x, int y)
-// {
-//     return x + y;
-// }
-
-// static double PlusMethod(double x, double y)
-// {
-//     return x + y;
-// }
-
-
-// int val1 = PlusMethod(1, 2);
-
-// double val2 = PlusMethod(2.44, 2.4);
-
-// Console.WriteLine("Int: " + val1);
-// Console.WriteLine("Float: " + val2);
-
-// This above works only inside the class.
