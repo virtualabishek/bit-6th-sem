@@ -1,9 +1,7 @@
 ## Property
 
-```csharp
 
 ```csharp
-```
 using System;
 public class Student
 {
@@ -39,7 +37,6 @@ public class HelloWorld
 
 ```csharp
 
-
 using System;
 
 public class Student
@@ -64,9 +61,6 @@ public class HelloWorld
         Console.WriteLine(s[1]);
     }
 }
-```
-
-
 ```
 
 
@@ -116,7 +110,7 @@ public class HelloWorld
     }
 }
 ```
-```
+
 
 
 
