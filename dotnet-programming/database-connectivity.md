@@ -830,3 +830,89 @@ class Program
 
 If you want, I can also write a **theory explanation** + **diagram** so your exam looks like you actually studied, Abi.
 
+
+
+Alright Abi, here’s a **7-mark ready, concise bullet summary** of the core ADO.NET classes with their **core concepts and example usage**. You can literally write this in your NCC exam.
+
+---
+
+## **Core ADO.NET Classes – Summary**
+
+### **1. SqlConnection**
+
+* **Purpose:** Connects the application to the database.
+* **Core Concept:** Manages database connection (open/close).
+* **Example:**
+
+  ```csharp
+  SqlConnection con = new SqlConnection("ConnectionString");
+  con.Open();
+  ```
+
+---
+
+### **2. SqlCommand**
+
+* **Purpose:** Executes SQL queries or stored procedures.
+* **Core Concept:** Sends commands to the database.
+* **Example:**
+
+  ```csharp
+  SqlCommand cmd = new SqlCommand("SELECT * FROM Students", con);
+  ```
+
+---
+
+### **3. SqlDataReader**
+
+* **Purpose:** Reads data in **forward-only, read-only** mode.
+* **Core Concept:** Fast, efficient retrieval of data.
+* **Example:**
+
+  ```csharp
+  SqlDataReader reader = cmd.ExecuteReader();
+  while(reader.Read()) { Console.WriteLine(reader["Name"]); }
+  ```
+
+---
+
+### **4. SqlDataAdapter**
+
+* **Purpose:** Fills **DataSet/DataTable** and updates database.
+* **Core Concept:** Provides **disconnected data access**.
+* **Example:**
+
+  ```csharp
+  SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM Students", con);
+  DataSet ds = new DataSet();
+  adapter.Fill(ds);
+  ```
+
+---
+
+### **5. DataSet / DataTable**
+
+* **Purpose:** Stores data **in-memory**.
+* **Core Concept:** Editable, disconnected, reusable data tables.
+* **Example:**
+
+  ```csharp
+  DataTable dt = ds.Tables[0];
+  ```
+
+---
+
+### **Quick Exam Diagram (Optional)**
+
+```
+Database <--SqlConnection--> SqlCommand --> SqlDataReader (connected)
+Database <--SqlConnection--> SqlDataAdapter --> DataSet/DataTable (disconnected)
+```
+
+---
+
+If you want, Abi, I can also make a **super short “2-line memory version”** that you can literally write in 2 minutes for 7 marks. It’s perfect before the exam.
+
+Do you want me to do that?
+
+
