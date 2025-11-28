@@ -112,6 +112,77 @@ public class HelloWorld
 ```
 
 
+## Method Hiding Overloading Overriding
+
+```csharp
+using System;
+
+class Parent
+{
+    // ----- FOR OVERRIDING -----
+    public virtual void Show()
+    {
+        Console.WriteLine("Parent Show (virtual)");
+    }
+
+    // ----- FOR HIDING -----
+    public void Display()
+    {
+        Console.WriteLine("Parent Display");
+    }
+
+    // ----- FOR OVERLOADING -----
+    public void Add(int a, int b)
+    {
+        Console.WriteLine("Add(int, int): " + (a + b));
+    }
+
+    public void Add(double a, double b)
+    {
+        Console.WriteLine("Add(double, double): " + (a + b));
+    }
+}
+
+class Child : Parent
+{
+    // ----- METHOD OVERRIDING -----
+    public override void Show()
+    {
+        Console.WriteLine("Child Show (override)");
+    }
+
+    // ----- METHOD HIDING -----
+    public new void Display()
+    {
+        Console.WriteLine("Child Display (hidden)");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Parent p = new Parent();
+        Child c = new Child();
+        Parent pc = new Child();
+
+        Console.WriteLine("=== METHOD OVERRIDING ===");
+        p.Show();     // Parent version
+        c.Show();     // Child version
+        pc.Show();    // Child version (runtime polymorphism)
+
+        Console.WriteLine("\n=== METHOD HIDING ===");
+        p.Display();  // Parent display
+        c.Display();  // Child display
+        pc.Display(); // Parent display (because of hiding)
+
+        Console.WriteLine("\n=== METHOD OVERLOADING ===");
+        p.Add(5, 10);      // int version
+        p.Add(2.5, 3.5);   // double version
+    }
+}
+```
+
 
 
 
