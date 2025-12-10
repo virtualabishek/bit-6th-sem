@@ -128,3 +128,6 @@ The **System Software (e.g., DirectX)** is the Factory Supervisor (the Operating
 The **Libraries (e.g., OpenGL)** are the specialized, portable robot arms on the assembly line that perform precise, repeatable tasks (rendering 3D graphics) using efficient, pre-written functions.
 
 The **Device Drivers** are the exact specifications and manuals for each unique component (the specific CPU, GPU, or sound card), which translate the factory supervisor's commands into electrical signals that the **Device** (the hardware) can execute.
+
+
+## New
