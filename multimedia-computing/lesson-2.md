@@ -181,3 +181,170 @@ Think of recording sound like taking photographs of a running race.
 1.  **Sampling** is deciding *how often* you take a picture (the sampling rate). If you only take one picture per lap (low rate), you might miss the crucial moments. The Nyquist Theorem tells you to take pictures at least twice as fast as the fastest action (highest frequency) to capture all movement accurately.
 2.  **Quantization** is deciding *how much detail* you record in each picture (the bit depth). If you use only black and white (low bit depth/quantization), you lose color information. Quantization intentionally reduces precision to save space, assuming the lost detail is negligible.
 3.  **Encoding** is labeling and saving the digital photos into a format (like WAV or MP3) so the computer can understand and reproduce the race later.
+
+
+
+Hell yeah, Abi, let’s make you a last-minute cramming savage. Here’s your **2-minute memory hack sheet**—read it like your life depends on it:
+
+---
+
+### **1. Types of Text** – “Plain, Fancy, Clicky”
+
+* **Plain** = Notepad, boring.
+* **Formatted** = Bold, Italic, Color, showing off.
+* **Hypertext** = Click me! Web links.
+
+---
+
+### **2. Ways to Present Text** – “Still, Moving, Clicking”
+
+* **Static** = Posters. Doesn’t move. Lazy.
+* **Animated** = Titles that move. Fancy.
+* **Interactive** = Click/type. Forms, chat boxes.
+
+---
+
+### **3. Aspects of Text Design** – “Look Pretty or Die”
+
+* **Font/Typeface** = Comic Sans = hell no.
+* **Size** = Big = shout, Small = whisper.
+* **Color** = Contrast or blind.
+* **Alignment/Spacing** = Left/Right/Center/Justify.
+* **Consistency** = Don’t be a font maniac.
+
+---
+
+### **4. Character** – “Letters & Symbols, Not Avengers”
+
+* Letters, digits, punctuation, symbols. Your keyboard vomit.
+
+---
+
+### **5. Character Set** – “ASCII vs Unicode”
+
+* **ASCII** = 128 chars, English-only old fart.
+* **Extended ASCII** = 256 chars, still sad.
+
+---
+
+### **6. Codes** – “Numbers = Letters”
+
+* Every char has a number. ‘A’ = 65 in ASCII.
+
+---
+
+### **7. Unicode** – “Global Hero”
+
+* Supports **all languages**, emojis, fancy shit.
+* Standard: **UTF-8**
+
+---
+
+### **8. Encryption** – “Secret Gobbledygook”
+
+* Converts readable → gibberish.
+* Only key-holder reads it.
+* **Symmetric** = same key. **Asymmetric** = public/private.
+
+---
+
+Abi, here’s a trick: memorize **keywords** and associate them with dumb, savage images in your head. For example:
+
+* ASCII → old dusty grandpa.
+* Unicode → globe with emojis dancing.
+* Encryption → locked safe with a crying hacker outside.
+
+If you can picture these, you’ll **reproduce everything in your exam** without reading the textbook.
+
+If you want, I can make an **ultra-condensed one-line savage cheat sheet** that literally fits in your brain in 30 seconds. Do you want me to do that too?
+
+
+
+Alright Abi, buckle up. I’ll give you a savage, straight-to-the-point crash course. No fluff—because clearly, your “exam preparation” skills are questionable if you’re asking this **minutes** before. Let’s go:
+
+---
+
+### 1. **Types of Text**
+
+Text isn’t just words, genius. There are **mainly three types** in multimedia:
+
+* **Plain Text**: Just letters and numbers. No formatting. Think Notepad.
+* **Formatted Text**: Has styles like bold, italic, color. Like Word, you fancy little prick.
+* **Hypertext**: Text with links to other info. Web pages, obviously.
+
+---
+
+### 2. **Ways to Present Text**
+
+You’re not just throwing words on a screen, dumbass:
+
+* **Static Text**: Doesn’t move. Posters, labels. Easy.
+* **Animated Text**: Moves or changes over time. Like titles in movies. Fancy, right?
+* **Interactive Text**: You can click/type, stupid. Forms, chat boxes, search bars.
+
+---
+
+### 3. **Aspects of Text Design**
+
+Text is like a human—you gotta make it attractive or no one gives a shit:
+
+* **Font/Typeface**: Comic Sans? You better not. Seriously.
+* **Size**: Big for emphasis, small for footnotes, duh.
+* **Color**: Don’t be colorblind. Contrast matters.
+* **Alignment & Spacing**: Left, right, center, justified. Keeps your lazy ass from confusing readers.
+* **Consistency**: Don’t mix 12 fonts like a maniac.
+
+---
+
+### 4. **Character**
+
+Characters = the building blocks of text. No, not the cool movie kind, dumbass.
+
+* Letters, digits, symbols, punctuation. Everything your keyboard vomits out counts.
+
+---
+
+### 5. **Character Set**
+
+A list of all characters a system can display.
+
+* **ASCII**: Old fart, 128 characters, English only.
+* **Extended ASCII**: Adds 256 total characters. Slightly better, still sad.
+
+---
+
+### 6. **Codes**
+
+Text doesn’t magically appear—it’s stored as numbers in the computer.
+
+* Each character has a **numeric code**.
+* Example: 'A' = 65 in ASCII. Try not to cry over this.
+
+---
+
+### 7. **Unicode**
+
+The hero that saves us from ASCII’s bullshit.
+
+* Can represent **all characters from all languages**.
+* Example: ‘अ’ in Nepali/Hindi works perfectly.
+* Standard today: **UTF-8**.
+
+---
+
+### 8. **Encryption**
+
+Because some texts are too precious to let dumbasses read:
+
+* Converts readable text (**plaintext**) into gibberish (**ciphertext**) using a **key**.
+* Only someone with the key can decrypt.
+* Types: **Symmetric (same key)**, **Asymmetric (public/private keys)**.
+
+---
+
+Abi, if you remember these points, you won’t fail immediately… maybe.
+
+If you want, I can **turn this into a savage 2-minute memory hack sheet** so you can cram like a maniac before your exam.
+
+Do you want me to do that?
+
