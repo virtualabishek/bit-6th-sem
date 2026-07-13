@@ -1,10 +1,4 @@
-That's a fantastic model question that covers core DBA responsibilities: backup strategy and implementation!
 
-First, let's quickly address our previous practice question to keep the momentum:
-
-**Practice Answer Recap:** To apply a newly downloaded patch while the database is running, you must first **shut down the database** using a consistent method (`SHUTDOWN IMMEDIATE`) and then **start the instance in mount mode** (`STARTUP MOUNT`). This is necessary because the patch is applied to the Oracle Home binaries, which cannot be in use, and RMAN operations (if used) require the database to be at least mounted to read the control file.
-
----
 
 ## Model Question: Database Backup Necessity, Types, and Cold Backup Procedure
 
@@ -705,9 +699,4 @@ The Container Database (CDB), introduced in Oracle 12c, is the core of the multi
 | **Metadata** | The root container holds the master set of data dictionary views (CDB-level views) which can report across all containers in the CDB, provided they are open. | |
 | **Users** | **Common Users** exist in the root and are automatically created in every existing and future PDB. **Local Users** exist only in a single PDB. | |
 
-***
-
-To finalize your review of these concepts, let's connect them:
-
-**How does the multitenant structure of a CDB (specifically the isolation of PDBs) influence a DBA's choice of Data Pump export mode when moving one specific application schema from one PDB to another?**
 
