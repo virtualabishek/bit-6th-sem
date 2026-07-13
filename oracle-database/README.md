@@ -2,6 +2,8 @@
 
 This document provides a comprehensive guide to common Oracle Database administration tasks, including connecting to the database, checking versions, managing listeners, tablespaces, data files, and user management.
 
+## Lab Steps 
+
 ## Connecting to Oracle Database
 
 To connect as the system administrator:
