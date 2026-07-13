@@ -2,3 +2,4 @@
 **/obj
 **/**/wwwroot
 **/wwwroot/
+.env
